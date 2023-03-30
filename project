@@ -1,0 +1,2513 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "43f57af1",
+   "metadata": {
+    "id": "I18Jq4byuxJz",
+    "papermill": {
+     "duration": 0.011354,
+     "end_time": "2023-02-07T07:16:25.442419",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:25.431065",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# **⭐ Classification Model to Identify Multiple Disease**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fcb50876",
+   "metadata": {
+    "papermill": {
+     "duration": 0.008759,
+     "end_time": "2023-02-07T07:16:25.460753",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:25.451994",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Importing Libraries and Datasets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "32b37360",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:25.482514Z",
+     "iopub.status.busy": "2023-02-07T07:16:25.480879Z",
+     "iopub.status.idle": "2023-02-07T07:16:25.497147Z",
+     "shell.execute_reply": "2023-02-07T07:16:25.495959Z"
+    },
+    "id": "KMnSezUyqBGC",
+    "papermill": {
+     "duration": 0.030233,
+     "end_time": "2023-02-07T07:16:25.500425",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:25.470192",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# import library\n",
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "4c72ab19",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:25.520284Z",
+     "iopub.status.busy": "2023-02-07T07:16:25.519853Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.187677Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.186396Z"
+    },
+    "id": "sSNrMT5cu0QO",
+    "papermill": {
+     "duration": 0.681366,
+     "end_time": "2023-02-07T07:16:26.190935",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:25.509569",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# import data\n",
+    "disease = pd.read_csv('https://github.com/ybifoundation/Dataset/raw/main/MultipleDiseasePrediction.csv')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aee6c986",
+   "metadata": {
+    "papermill": {
+     "duration": 0.008505,
+     "end_time": "2023-02-07T07:16:26.210871",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.202366",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Exploring the Datasets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "650334ce",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.230919Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.229826Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.261106Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.259707Z"
+    },
+    "executionInfo": {
+     "elapsed": 647,
+     "status": "ok",
+     "timestamp": 1661324395377,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "47yQb5c2vnSy",
+    "outputId": "3ab9f815-9dce-4e13-d3a4-a4fc2de5404d",
+    "papermill": {
+     "duration": 0.045076,
+     "end_time": "2023-02-07T07:16:26.264828",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.219752",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>itching</th>\n",
+       "      <th>skin_rash</th>\n",
+       "      <th>nodal_skin_eruptions</th>\n",
+       "      <th>continuous_sneezing</th>\n",
+       "      <th>shivering</th>\n",
+       "      <th>chills</th>\n",
+       "      <th>joint_pain</th>\n",
+       "      <th>stomach_pain</th>\n",
+       "      <th>acidity</th>\n",
+       "      <th>ulcers_on_tongue</th>\n",
+       "      <th>...</th>\n",
+       "      <th>blackheads</th>\n",
+       "      <th>scurring</th>\n",
+       "      <th>skin_peeling</th>\n",
+       "      <th>silver_like_dusting</th>\n",
+       "      <th>small_dents_in_nails</th>\n",
+       "      <th>inflammatory_nails</th>\n",
+       "      <th>blister</th>\n",
+       "      <th>red_sore_around_nose</th>\n",
+       "      <th>yellow_crust_ooze</th>\n",
+       "      <th>prognosis</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Fungal infection</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Fungal infection</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Fungal infection</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Fungal infection</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>Fungal infection</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 133 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   itching  skin_rash  nodal_skin_eruptions  continuous_sneezing  shivering  \\\n",
+       "0        1          1                     1                    0          0   \n",
+       "1        0          1                     1                    0          0   \n",
+       "2        1          0                     1                    0          0   \n",
+       "3        1          1                     0                    0          0   \n",
+       "4        1          1                     1                    0          0   \n",
+       "\n",
+       "   chills  joint_pain  stomach_pain  acidity  ulcers_on_tongue  ...  \\\n",
+       "0       0           0             0        0                 0  ...   \n",
+       "1       0           0             0        0                 0  ...   \n",
+       "2       0           0             0        0                 0  ...   \n",
+       "3       0           0             0        0                 0  ...   \n",
+       "4       0           0             0        0                 0  ...   \n",
+       "\n",
+       "   blackheads  scurring  skin_peeling  silver_like_dusting  \\\n",
+       "0           0         0             0                    0   \n",
+       "1           0         0             0                    0   \n",
+       "2           0         0             0                    0   \n",
+       "3           0         0             0                    0   \n",
+       "4           0         0             0                    0   \n",
+       "\n",
+       "   small_dents_in_nails  inflammatory_nails  blister  red_sore_around_nose  \\\n",
+       "0                     0                   0        0                     0   \n",
+       "1                     0                   0        0                     0   \n",
+       "2                     0                   0        0                     0   \n",
+       "3                     0                   0        0                     0   \n",
+       "4                     0                   0        0                     0   \n",
+       "\n",
+       "   yellow_crust_ooze         prognosis  \n",
+       "0                  0  Fungal infection  \n",
+       "1                  0  Fungal infection  \n",
+       "2                  0  Fungal infection  \n",
+       "3                  0  Fungal infection  \n",
+       "4                  0  Fungal infection  \n",
+       "\n",
+       "[5 rows x 133 columns]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# view data\n",
+    "disease.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "5ae93a1c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.285505Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.285124Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.312122Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.310432Z"
+    },
+    "executionInfo": {
+     "elapsed": 575,
+     "status": "ok",
+     "timestamp": 1661324663982,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "CEQ00aPdvwT4",
+    "outputId": "d80220b2-9e26-49c0-e218-3f93306f4fa0",
+    "papermill": {
+     "duration": 0.040865,
+     "end_time": "2023-02-07T07:16:26.315090",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.274225",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 4920 entries, 0 to 4919\n",
+      "Columns: 133 entries, itching to prognosis\n",
+      "dtypes: int64(132), object(1)\n",
+      "memory usage: 5.0+ MB\n"
+     ]
+    }
+   ],
+   "source": [
+    "# info of data\n",
+    "disease.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "67cd17d7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.340347Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.339932Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.727086Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.725691Z"
+    },
+    "executionInfo": {
+     "elapsed": 475,
+     "status": "ok",
+     "timestamp": 1661324401904,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "dwf657_Rv1T2",
+    "outputId": "004d5ae1-fe08-41fa-e729-a147e56b2f0a",
+    "papermill": {
+     "duration": 0.401705,
+     "end_time": "2023-02-07T07:16:26.729630",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.327925",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>itching</th>\n",
+       "      <th>skin_rash</th>\n",
+       "      <th>nodal_skin_eruptions</th>\n",
+       "      <th>continuous_sneezing</th>\n",
+       "      <th>shivering</th>\n",
+       "      <th>chills</th>\n",
+       "      <th>joint_pain</th>\n",
+       "      <th>stomach_pain</th>\n",
+       "      <th>acidity</th>\n",
+       "      <th>ulcers_on_tongue</th>\n",
+       "      <th>...</th>\n",
+       "      <th>pus_filled_pimples</th>\n",
+       "      <th>blackheads</th>\n",
+       "      <th>scurring</th>\n",
+       "      <th>skin_peeling</th>\n",
+       "      <th>silver_like_dusting</th>\n",
+       "      <th>small_dents_in_nails</th>\n",
+       "      <th>inflammatory_nails</th>\n",
+       "      <th>blister</th>\n",
+       "      <th>red_sore_around_nose</th>\n",
+       "      <th>yellow_crust_ooze</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "      <td>4920.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>0.137805</td>\n",
+       "      <td>0.159756</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>0.045122</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>0.162195</td>\n",
+       "      <td>0.139024</td>\n",
+       "      <td>0.045122</td>\n",
+       "      <td>0.045122</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>0.021951</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "      <td>0.023171</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>0.344730</td>\n",
+       "      <td>0.366417</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>0.207593</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>0.368667</td>\n",
+       "      <td>0.346007</td>\n",
+       "      <td>0.207593</td>\n",
+       "      <td>0.207593</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>0.146539</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "      <td>0.150461</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>...</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>1.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>8 rows × 132 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "           itching    skin_rash  nodal_skin_eruptions  continuous_sneezing  \\\n",
+       "count  4920.000000  4920.000000           4920.000000          4920.000000   \n",
+       "mean      0.137805     0.159756              0.021951             0.045122   \n",
+       "std       0.344730     0.366417              0.146539             0.207593   \n",
+       "min       0.000000     0.000000              0.000000             0.000000   \n",
+       "25%       0.000000     0.000000              0.000000             0.000000   \n",
+       "50%       0.000000     0.000000              0.000000             0.000000   \n",
+       "75%       0.000000     0.000000              0.000000             0.000000   \n",
+       "max       1.000000     1.000000              1.000000             1.000000   \n",
+       "\n",
+       "         shivering       chills   joint_pain  stomach_pain      acidity  \\\n",
+       "count  4920.000000  4920.000000  4920.000000   4920.000000  4920.000000   \n",
+       "mean      0.021951     0.162195     0.139024      0.045122     0.045122   \n",
+       "std       0.146539     0.368667     0.346007      0.207593     0.207593   \n",
+       "min       0.000000     0.000000     0.000000      0.000000     0.000000   \n",
+       "25%       0.000000     0.000000     0.000000      0.000000     0.000000   \n",
+       "50%       0.000000     0.000000     0.000000      0.000000     0.000000   \n",
+       "75%       0.000000     0.000000     0.000000      0.000000     0.000000   \n",
+       "max       1.000000     1.000000     1.000000      1.000000     1.000000   \n",
+       "\n",
+       "       ulcers_on_tongue  ...  pus_filled_pimples   blackheads     scurring  \\\n",
+       "count       4920.000000  ...         4920.000000  4920.000000  4920.000000   \n",
+       "mean           0.021951  ...            0.021951     0.021951     0.021951   \n",
+       "std            0.146539  ...            0.146539     0.146539     0.146539   \n",
+       "min            0.000000  ...            0.000000     0.000000     0.000000   \n",
+       "25%            0.000000  ...            0.000000     0.000000     0.000000   \n",
+       "50%            0.000000  ...            0.000000     0.000000     0.000000   \n",
+       "75%            0.000000  ...            0.000000     0.000000     0.000000   \n",
+       "max            1.000000  ...            1.000000     1.000000     1.000000   \n",
+       "\n",
+       "       skin_peeling  silver_like_dusting  small_dents_in_nails  \\\n",
+       "count   4920.000000          4920.000000           4920.000000   \n",
+       "mean       0.023171             0.023171              0.023171   \n",
+       "std        0.150461             0.150461              0.150461   \n",
+       "min        0.000000             0.000000              0.000000   \n",
+       "25%        0.000000             0.000000              0.000000   \n",
+       "50%        0.000000             0.000000              0.000000   \n",
+       "75%        0.000000             0.000000              0.000000   \n",
+       "max        1.000000             1.000000              1.000000   \n",
+       "\n",
+       "       inflammatory_nails      blister  red_sore_around_nose  \\\n",
+       "count         4920.000000  4920.000000           4920.000000   \n",
+       "mean             0.023171     0.023171              0.023171   \n",
+       "std              0.150461     0.150461              0.150461   \n",
+       "min              0.000000     0.000000              0.000000   \n",
+       "25%              0.000000     0.000000              0.000000   \n",
+       "50%              0.000000     0.000000              0.000000   \n",
+       "75%              0.000000     0.000000              0.000000   \n",
+       "max              1.000000     1.000000              1.000000   \n",
+       "\n",
+       "       yellow_crust_ooze  \n",
+       "count        4920.000000  \n",
+       "mean            0.023171  \n",
+       "std             0.150461  \n",
+       "min             0.000000  \n",
+       "25%             0.000000  \n",
+       "50%             0.000000  \n",
+       "75%             0.000000  \n",
+       "max             1.000000  \n",
+       "\n",
+       "[8 rows x 132 columns]"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# summary statistics\n",
+    "disease.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "1482b936",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.749868Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.749492Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.764547Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.763241Z"
+    },
+    "executionInfo": {
+     "elapsed": 402,
+     "status": "ok",
+     "timestamp": 1661324404923,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "yvLoDmdcv5Qm",
+    "outputId": "50abb344-05f4-4566-d6d0-8f6970fc7dbb",
+    "papermill": {
+     "duration": 0.027947,
+     "end_time": "2023-02-07T07:16:26.766929",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.738982",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "itching                 0\n",
+       "skin_rash               0\n",
+       "nodal_skin_eruptions    0\n",
+       "continuous_sneezing     0\n",
+       "shivering               0\n",
+       "                       ..\n",
+       "inflammatory_nails      0\n",
+       "blister                 0\n",
+       "red_sore_around_nose    0\n",
+       "yellow_crust_ooze       0\n",
+       "prognosis               0\n",
+       "Length: 133, dtype: int64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# check for missing value\n",
+    "disease.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "87f17b09",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.788324Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.787322Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.811359Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.810170Z"
+    },
+    "papermill": {
+     "duration": 0.037871,
+     "end_time": "2023-02-07T07:16:26.814132",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.776261",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "itching                                                               678\n",
+       "skin_rash                                                             786\n",
+       "nodal_skin_eruptions                                                  108\n",
+       "continuous_sneezing                                                   222\n",
+       "shivering                                                             108\n",
+       "                                              ...                        \n",
+       "inflammatory_nails                                                    114\n",
+       "blister                                                               114\n",
+       "red_sore_around_nose                                                  114\n",
+       "yellow_crust_ooze                                                     114\n",
+       "prognosis               Fungal infectionFungal infectionFungal infecti...\n",
+       "Length: 133, dtype: object"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "disease.sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "15dd25bd",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.844190Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.843757Z",
+     "iopub.status.idle": "2023-02-07T07:16:26.880760Z",
+     "shell.execute_reply": "2023-02-07T07:16:26.879729Z"
+    },
+    "executionInfo": {
+     "elapsed": 413,
+     "status": "ok",
+     "timestamp": 1661324409628,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "0dNMNNIvwBtd",
+    "outputId": "c38558a9-c4e9-4f59-d23d-26e6fcd05419",
+    "papermill": {
+     "duration": 0.053953,
+     "end_time": "2023-02-07T07:16:26.883267",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.829314",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "itching                  2\n",
+       "skin_rash                2\n",
+       "nodal_skin_eruptions     2\n",
+       "continuous_sneezing      2\n",
+       "shivering                2\n",
+       "                        ..\n",
+       "inflammatory_nails       2\n",
+       "blister                  2\n",
+       "red_sore_around_nose     2\n",
+       "yellow_crust_ooze        2\n",
+       "prognosis               41\n",
+       "Length: 133, dtype: int64"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# check for categories\n",
+    "disease.nunique()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "2300b83e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:26.906689Z",
+     "iopub.status.busy": "2023-02-07T07:16:26.905930Z",
+     "iopub.status.idle": "2023-02-07T07:16:27.177011Z",
+     "shell.execute_reply": "2023-02-07T07:16:27.176208Z"
+    },
+    "executionInfo": {
+     "elapsed": 526,
+     "status": "ok",
+     "timestamp": 1661324688145,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "nF78p-E0CLKY",
+    "outputId": "580fc825-bbd0-43e9-ae1a-753c93d1eb39",
+    "papermill": {
+     "duration": 0.287704,
+     "end_time": "2023-02-07T07:16:27.181474",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:26.893770",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>itching</th>\n",
+       "      <th>skin_rash</th>\n",
+       "      <th>nodal_skin_eruptions</th>\n",
+       "      <th>continuous_sneezing</th>\n",
+       "      <th>shivering</th>\n",
+       "      <th>chills</th>\n",
+       "      <th>joint_pain</th>\n",
+       "      <th>stomach_pain</th>\n",
+       "      <th>acidity</th>\n",
+       "      <th>ulcers_on_tongue</th>\n",
+       "      <th>...</th>\n",
+       "      <th>pus_filled_pimples</th>\n",
+       "      <th>blackheads</th>\n",
+       "      <th>scurring</th>\n",
+       "      <th>skin_peeling</th>\n",
+       "      <th>silver_like_dusting</th>\n",
+       "      <th>small_dents_in_nails</th>\n",
+       "      <th>inflammatory_nails</th>\n",
+       "      <th>blister</th>\n",
+       "      <th>red_sore_around_nose</th>\n",
+       "      <th>yellow_crust_ooze</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>itching</th>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.318158</td>\n",
+       "      <td>0.326439</td>\n",
+       "      <td>-0.086906</td>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>-0.175905</td>\n",
+       "      <td>-0.160650</td>\n",
+       "      <td>0.202850</td>\n",
+       "      <td>-0.086906</td>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>-0.061573</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>skin_rash</th>\n",
+       "      <td>0.318158</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.298143</td>\n",
+       "      <td>-0.094786</td>\n",
+       "      <td>-0.065324</td>\n",
+       "      <td>-0.029324</td>\n",
+       "      <td>0.171134</td>\n",
+       "      <td>0.161784</td>\n",
+       "      <td>-0.094786</td>\n",
+       "      <td>-0.065324</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.320859</td>\n",
+       "      <td>0.320859</td>\n",
+       "      <td>0.320859</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>0.331087</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>nodal_skin_eruptions</th>\n",
+       "      <td>0.326439</td>\n",
+       "      <td>0.298143</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.065917</td>\n",
+       "      <td>-0.060200</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>continuous_sneezing</th>\n",
+       "      <td>-0.086906</td>\n",
+       "      <td>-0.094786</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.608981</td>\n",
+       "      <td>0.446238</td>\n",
+       "      <td>-0.087351</td>\n",
+       "      <td>-0.047254</td>\n",
+       "      <td>-0.047254</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>shivering</th>\n",
+       "      <td>-0.059893</td>\n",
+       "      <td>-0.065324</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>0.608981</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.295332</td>\n",
+       "      <td>-0.060200</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.032566</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.022444</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>small_dents_in_nails</th>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.067765</td>\n",
+       "      <td>0.359845</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>inflammatory_nails</th>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.067765</td>\n",
+       "      <td>0.359845</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>blister</th>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.067765</td>\n",
+       "      <td>-0.061889</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>0.946120</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>red_sore_around_nose</th>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.067765</td>\n",
+       "      <td>-0.061889</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>1.000000</td>\n",
+       "      <td>0.946120</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>yellow_crust_ooze</th>\n",
+       "      <td>-0.061573</td>\n",
+       "      <td>0.331087</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.067765</td>\n",
+       "      <td>-0.061889</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.033480</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023073</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>-0.023720</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>0.946120</td>\n",
+       "      <td>1.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>132 rows × 132 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                       itching  skin_rash  nodal_skin_eruptions  \\\n",
+       "itching               1.000000   0.318158              0.326439   \n",
+       "skin_rash             0.318158   1.000000              0.298143   \n",
+       "nodal_skin_eruptions  0.326439   0.298143              1.000000   \n",
+       "continuous_sneezing  -0.086906  -0.094786             -0.032566   \n",
+       "shivering            -0.059893  -0.065324             -0.022444   \n",
+       "...                        ...        ...                   ...   \n",
+       "small_dents_in_nails -0.061573   0.331087             -0.023073   \n",
+       "inflammatory_nails   -0.061573   0.331087             -0.023073   \n",
+       "blister              -0.061573   0.331087             -0.023073   \n",
+       "red_sore_around_nose -0.061573   0.331087             -0.023073   \n",
+       "yellow_crust_ooze    -0.061573   0.331087             -0.023073   \n",
+       "\n",
+       "                      continuous_sneezing  shivering    chills  joint_pain  \\\n",
+       "itching                         -0.086906  -0.059893 -0.175905   -0.160650   \n",
+       "skin_rash                       -0.094786  -0.065324 -0.029324    0.171134   \n",
+       "nodal_skin_eruptions            -0.032566  -0.022444 -0.065917   -0.060200   \n",
+       "continuous_sneezing              1.000000   0.608981  0.446238   -0.087351   \n",
+       "shivering                        0.608981   1.000000  0.295332   -0.060200   \n",
+       "...                                   ...        ...       ...         ...   \n",
+       "small_dents_in_nails            -0.033480  -0.023073 -0.067765    0.359845   \n",
+       "inflammatory_nails              -0.033480  -0.023073 -0.067765    0.359845   \n",
+       "blister                         -0.033480  -0.023073 -0.067765   -0.061889   \n",
+       "red_sore_around_nose            -0.033480  -0.023073 -0.067765   -0.061889   \n",
+       "yellow_crust_ooze               -0.033480  -0.023073 -0.067765   -0.061889   \n",
+       "\n",
+       "                      stomach_pain   acidity  ulcers_on_tongue  ...  \\\n",
+       "itching                   0.202850 -0.086906         -0.059893  ...   \n",
+       "skin_rash                 0.161784 -0.094786         -0.065324  ...   \n",
+       "nodal_skin_eruptions     -0.032566 -0.032566         -0.022444  ...   \n",
+       "continuous_sneezing      -0.047254 -0.047254         -0.032566  ...   \n",
+       "shivering                -0.032566 -0.032566         -0.022444  ...   \n",
+       "...                            ...       ...               ...  ...   \n",
+       "small_dents_in_nails     -0.033480 -0.033480         -0.023073  ...   \n",
+       "inflammatory_nails       -0.033480 -0.033480         -0.023073  ...   \n",
+       "blister                  -0.033480 -0.033480         -0.023073  ...   \n",
+       "red_sore_around_nose     -0.033480 -0.033480         -0.023073  ...   \n",
+       "yellow_crust_ooze        -0.033480 -0.033480         -0.023073  ...   \n",
+       "\n",
+       "                      pus_filled_pimples  blackheads  scurring  skin_peeling  \\\n",
+       "itching                        -0.059893   -0.059893 -0.059893     -0.061573   \n",
+       "skin_rash                       0.320859    0.320859  0.320859      0.331087   \n",
+       "nodal_skin_eruptions           -0.022444   -0.022444 -0.022444     -0.023073   \n",
+       "continuous_sneezing            -0.032566   -0.032566 -0.032566     -0.033480   \n",
+       "shivering                      -0.022444   -0.022444 -0.022444     -0.023073   \n",
+       "...                                  ...         ...       ...           ...   \n",
+       "small_dents_in_nails           -0.023073   -0.023073 -0.023073      0.946120   \n",
+       "inflammatory_nails             -0.023073   -0.023073 -0.023073      0.946120   \n",
+       "blister                        -0.023073   -0.023073 -0.023073     -0.023720   \n",
+       "red_sore_around_nose           -0.023073   -0.023073 -0.023073     -0.023720   \n",
+       "yellow_crust_ooze              -0.023073   -0.023073 -0.023073     -0.023720   \n",
+       "\n",
+       "                      silver_like_dusting  small_dents_in_nails  \\\n",
+       "itching                         -0.061573             -0.061573   \n",
+       "skin_rash                        0.331087              0.331087   \n",
+       "nodal_skin_eruptions            -0.023073             -0.023073   \n",
+       "continuous_sneezing             -0.033480             -0.033480   \n",
+       "shivering                       -0.023073             -0.023073   \n",
+       "...                                   ...                   ...   \n",
+       "small_dents_in_nails             0.946120              1.000000   \n",
+       "inflammatory_nails               0.946120              0.946120   \n",
+       "blister                         -0.023720             -0.023720   \n",
+       "red_sore_around_nose            -0.023720             -0.023720   \n",
+       "yellow_crust_ooze               -0.023720             -0.023720   \n",
+       "\n",
+       "                      inflammatory_nails   blister  red_sore_around_nose  \\\n",
+       "itching                        -0.061573 -0.061573             -0.061573   \n",
+       "skin_rash                       0.331087  0.331087              0.331087   \n",
+       "nodal_skin_eruptions           -0.023073 -0.023073             -0.023073   \n",
+       "continuous_sneezing            -0.033480 -0.033480             -0.033480   \n",
+       "shivering                      -0.023073 -0.023073             -0.023073   \n",
+       "...                                  ...       ...                   ...   \n",
+       "small_dents_in_nails            0.946120 -0.023720             -0.023720   \n",
+       "inflammatory_nails              1.000000 -0.023720             -0.023720   \n",
+       "blister                        -0.023720  1.000000              0.946120   \n",
+       "red_sore_around_nose           -0.023720  0.946120              1.000000   \n",
+       "yellow_crust_ooze              -0.023720  0.946120              0.946120   \n",
+       "\n",
+       "                      yellow_crust_ooze  \n",
+       "itching                       -0.061573  \n",
+       "skin_rash                      0.331087  \n",
+       "nodal_skin_eruptions          -0.023073  \n",
+       "continuous_sneezing           -0.033480  \n",
+       "shivering                     -0.023073  \n",
+       "...                                 ...  \n",
+       "small_dents_in_nails          -0.023720  \n",
+       "inflammatory_nails            -0.023720  \n",
+       "blister                        0.946120  \n",
+       "red_sore_around_nose           0.946120  \n",
+       "yellow_crust_ooze              1.000000  \n",
+       "\n",
+       "[132 rows x 132 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# correlation\n",
+    "disease.corr()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9e4adfd7",
+   "metadata": {
+    "papermill": {
+     "duration": 0.010916,
+     "end_time": "2023-02-07T07:16:27.207250",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:27.196334",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Visualizing the Dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "ee6c94ef",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:27.232204Z",
+     "iopub.status.busy": "2023-02-07T07:16:27.231459Z",
+     "iopub.status.idle": "2023-02-07T07:16:32.815628Z",
+     "shell.execute_reply": "2023-02-07T07:16:32.814534Z"
+    },
+    "id": "YVH5G64MyPWu",
+    "papermill": {
+     "duration": 5.599622,
+     "end_time": "2023-02-07T07:16:32.818156",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:27.218534",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<seaborn.axisgrid.PairGrid at 0x7f6ad48cf6d0>"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 900x900 with 30 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# visualize pairplot\n",
+    "import seaborn as sns\n",
+    "plo = disease.columns[0:5].tolist()\n",
+    "sns.pairplot(disease[plo])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2641fb9f",
+   "metadata": {
+    "papermill": {
+     "duration": 0.011307,
+     "end_time": "2023-02-07T07:16:32.841491",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.830184",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Checking all the columns"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "818a245d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:32.867120Z",
+     "iopub.status.busy": "2023-02-07T07:16:32.866678Z",
+     "iopub.status.idle": "2023-02-07T07:16:32.872185Z",
+     "shell.execute_reply": "2023-02-07T07:16:32.871132Z"
+    },
+    "executionInfo": {
+     "elapsed": 443,
+     "status": "ok",
+     "timestamp": 1661324704265,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "ymxMIpJtzyYK",
+    "outputId": "6eb3c25d-2a5e-473d-a21d-9ab696b8e3d1",
+    "papermill": {
+     "duration": 0.021447,
+     "end_time": "2023-02-07T07:16:32.874806",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.853359",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['itching', 'skin_rash', 'nodal_skin_eruptions', 'continuous_sneezing', 'shivering', 'chills', 'joint_pain', 'stomach_pain', 'acidity', 'ulcers_on_tongue', 'muscle_wasting', 'vomiting', 'burning_micturition', 'spotting_ urination', 'fatigue', 'weight_gain', 'anxiety', 'cold_hands_and_feets', 'mood_swings', 'weight_loss', 'restlessness', 'lethargy', 'patches_in_throat', 'irregular_sugar_level', 'cough', 'high_fever', 'sunken_eyes', 'breathlessness', 'sweating', 'dehydration', 'indigestion', 'headache', 'yellowish_skin', 'dark_urine', 'nausea', 'loss_of_appetite', 'pain_behind_the_eyes', 'back_pain', 'constipation', 'abdominal_pain', 'diarrhoea', 'mild_fever', 'yellow_urine', 'yellowing_of_eyes', 'acute_liver_failure', 'fluid_overload', 'swelling_of_stomach', 'swelled_lymph_nodes', 'malaise', 'blurred_and_distorted_vision', 'phlegm', 'throat_irritation', 'redness_of_eyes', 'sinus_pressure', 'runny_nose', 'congestion', 'chest_pain', 'weakness_in_limbs', 'fast_heart_rate', 'pain_during_bowel_movements', 'pain_in_anal_region', 'bloody_stool', 'irritation_in_anus', 'neck_pain', 'dizziness', 'cramps', 'bruising', 'obesity', 'swollen_legs', 'swollen_blood_vessels', 'puffy_face_and_eyes', 'enlarged_thyroid', 'brittle_nails', 'swollen_extremeties', 'excessive_hunger', 'extra_marital_contacts', 'drying_and_tingling_lips', 'slurred_speech', 'knee_pain', 'hip_joint_pain', 'muscle_weakness', 'stiff_neck', 'swelling_joints', 'movement_stiffness', 'spinning_movements', 'loss_of_balance', 'unsteadiness', 'weakness_of_one_body_side', 'loss_of_smell', 'bladder_discomfort', 'foul_smell_of urine', 'continuous_feel_of_urine', 'passage_of_gases', 'internal_itching', 'toxic_look_(typhos)', 'depression', 'irritability', 'muscle_pain', 'altered_sensorium', 'red_spots_over_body', 'belly_pain', 'abnormal_menstruation', 'dischromic _patches', 'watering_from_eyes', 'increased_appetite', 'polyuria', 'family_history', 'mucoid_sputum', 'rusty_sputum', 'lack_of_concentration', 'visual_disturbances', 'receiving_blood_transfusion', 'receiving_unsterile_injections', 'coma', 'stomach_bleeding', 'distention_of_abdomen', 'history_of_alcohol_consumption', 'fluid_overload.1', 'blood_in_sputum', 'prominent_veins_on_calf', 'palpitations', 'painful_walking', 'pus_filled_pimples', 'blackheads', 'scurring', 'skin_peeling', 'silver_like_dusting', 'small_dents_in_nails', 'inflammatory_nails', 'blister', 'red_sore_around_nose', 'yellow_crust_ooze', 'prognosis']\n"
+     ]
+    }
+   ],
+   "source": [
+    "# column names\n",
+    "print(disease.columns.to_list())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f3b3c173",
+   "metadata": {
+    "papermill": {
+     "duration": 0.011539,
+     "end_time": "2023-02-07T07:16:32.898285",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.886746",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Initializing the Feature and Target Dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "cb2bb614",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:32.923173Z",
+     "iopub.status.busy": "2023-02-07T07:16:32.922761Z",
+     "iopub.status.idle": "2023-02-07T07:16:32.927737Z",
+     "shell.execute_reply": "2023-02-07T07:16:32.926394Z"
+    },
+    "id": "kDznvpMcz3Xj",
+    "papermill": {
+     "duration": 0.020495,
+     "end_time": "2023-02-07T07:16:32.930357",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.909862",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# define y\n",
+    "y = disease[\"prognosis\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "09d68836",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:32.957074Z",
+     "iopub.status.busy": "2023-02-07T07:16:32.956582Z",
+     "iopub.status.idle": "2023-02-07T07:16:32.975638Z",
+     "shell.execute_reply": "2023-02-07T07:16:32.974293Z"
+    },
+    "id": "VYOT05Uzz63S",
+    "papermill": {
+     "duration": 0.036241,
+     "end_time": "2023-02-07T07:16:32.978492",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.942251",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# define X\n",
+    "X = disease[['itching', 'skin_rash', 'nodal_skin_eruptions', \n",
+    "             'continuous_sneezing', 'shivering', 'chills', \n",
+    "             'joint_pain', 'stomach_pain', 'acidity', 'ulcers_on_tongue',\n",
+    "             'muscle_wasting', 'vomiting', 'burning_micturition', 'spotting_ urination',\n",
+    "             'fatigue', 'weight_gain', 'anxiety', 'cold_hands_and_feets', 'mood_swings',\n",
+    "             'weight_loss', 'restlessness', 'lethargy', 'patches_in_throat', 'irregular_sugar_level',\n",
+    "             'cough', 'high_fever', 'sunken_eyes', 'breathlessness', 'sweating', 'dehydration',\n",
+    "             'indigestion', 'headache', 'yellowish_skin', 'dark_urine', 'nausea', 'loss_of_appetite',\n",
+    "             'pain_behind_the_eyes', 'back_pain', 'constipation', 'abdominal_pain', 'diarrhoea',\n",
+    "             'mild_fever', 'yellow_urine', 'yellowing_of_eyes', 'acute_liver_failure', 'fluid_overload',\n",
+    "             'swelling_of_stomach', 'swelled_lymph_nodes', 'malaise', 'blurred_and_distorted_vision',\n",
+    "             'phlegm', 'throat_irritation', 'redness_of_eyes', 'sinus_pressure', 'runny_nose', 'congestion',\n",
+    "             'chest_pain', 'weakness_in_limbs', 'fast_heart_rate', 'pain_during_bowel_movements',\n",
+    "             'pain_in_anal_region', 'bloody_stool', 'irritation_in_anus', 'neck_pain', 'dizziness',\n",
+    "             'cramps', 'bruising', 'obesity', 'swollen_legs', 'swollen_blood_vessels',\n",
+    "             'puffy_face_and_eyes', 'enlarged_thyroid', 'brittle_nails', 'swollen_extremeties',\n",
+    "             'excessive_hunger', 'extra_marital_contacts', 'drying_and_tingling_lips', 'slurred_speech',\n",
+    "             'knee_pain', 'hip_joint_pain', 'muscle_weakness', 'stiff_neck', 'swelling_joints',\n",
+    "             'movement_stiffness', 'spinning_movements', 'loss_of_balance', 'unsteadiness',\n",
+    "             'weakness_of_one_body_side', 'loss_of_smell', 'bladder_discomfort', 'foul_smell_of urine',\n",
+    "             'continuous_feel_of_urine', 'passage_of_gases', 'internal_itching', 'toxic_look_(typhos)',\n",
+    "             'depression', 'irritability', 'muscle_pain', 'altered_sensorium', 'red_spots_over_body',\n",
+    "             'belly_pain', 'abnormal_menstruation', 'dischromic _patches', 'watering_from_eyes',\n",
+    "             'increased_appetite', 'polyuria', 'family_history', 'mucoid_sputum', 'rusty_sputum',\n",
+    "             'lack_of_concentration', 'visual_disturbances', 'receiving_blood_transfusion',\n",
+    "             'receiving_unsterile_injections', 'coma', 'stomach_bleeding', 'distention_of_abdomen',\n",
+    "             'history_of_alcohol_consumption', 'fluid_overload.1', 'blood_in_sputum', 'prominent_veins_on_calf',\n",
+    "             'palpitations', 'painful_walking', 'pus_filled_pimples', 'blackheads', 'scurring', 'skin_peeling',\n",
+    "             'silver_like_dusting', 'small_dents_in_nails', 'inflammatory_nails', 'blister',\n",
+    "             'red_sore_around_nose', 'yellow_crust_ooze',]]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "18fa9c4a",
+   "metadata": {
+    "papermill": {
+     "duration": 0.011524,
+     "end_time": "2023-02-07T07:16:33.001937",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:32.990413",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "# Spilliting the Training and Testing Dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "a5c31053",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:33.027569Z",
+     "iopub.status.busy": "2023-02-07T07:16:33.026924Z",
+     "iopub.status.idle": "2023-02-07T07:16:33.219652Z",
+     "shell.execute_reply": "2023-02-07T07:16:33.218461Z"
+    },
+    "id": "BMu-d3slzX7j",
+    "papermill": {
+     "duration": 0.20916,
+     "end_time": "2023-02-07T07:16:33.222753",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:33.013593",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# split data\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, train_size = 0.8)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "1f6adde6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:33.248891Z",
+     "iopub.status.busy": "2023-02-07T07:16:33.248480Z",
+     "iopub.status.idle": "2023-02-07T07:16:33.256725Z",
+     "shell.execute_reply": "2023-02-07T07:16:33.255215Z"
+    },
+    "executionInfo": {
+     "elapsed": 426,
+     "status": "ok",
+     "timestamp": 1661324771894,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "6TYpjNnAzgHV",
+    "outputId": "c93f8148-8355-4f5b-ba21-3b822c30dec6",
+    "papermill": {
+     "duration": 0.024197,
+     "end_time": "2023-02-07T07:16:33.259252",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:33.235055",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([(3936, 132), (984, 132), (3936,), (984,)], dtype=object)"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# verify shape\n",
+    "import numpy as np\n",
+    "a = np.array([X_train.shape, X_test.shape, y_train.shape, y_test.shape], dtype = 'object')\n",
+    "a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "a9e8c505",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:33.286043Z",
+     "iopub.status.busy": "2023-02-07T07:16:33.284777Z",
+     "iopub.status.idle": "2023-02-07T07:16:33.485471Z",
+     "shell.execute_reply": "2023-02-07T07:16:33.484296Z"
+    },
+    "id": "JsLlB3pi0Frp",
+    "papermill": {
+     "duration": 0.217204,
+     "end_time": "2023-02-07T07:16:33.488455",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:33.271251",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# select model\n",
+    "from sklearn.ensemble import RandomForestClassifier \n",
+    "model = RandomForestClassifier()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "69f06c9a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:33.514901Z",
+     "iopub.status.busy": "2023-02-07T07:16:33.514523Z",
+     "iopub.status.idle": "2023-02-07T07:16:33.991844Z",
+     "shell.execute_reply": "2023-02-07T07:16:33.990578Z"
+    },
+    "executionInfo": {
+     "elapsed": 1172,
+     "status": "ok",
+     "timestamp": 1661324811812,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "zNcMLK2N0S4N",
+    "outputId": "42689df8-ca4f-4fc7-ce92-35a129c091a1",
+    "papermill": {
+     "duration": 0.493528,
+     "end_time": "2023-02-07T07:16:33.994566",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:33.501038",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "RandomForestClassifier()"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# train model\n",
+    "model.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "0fa93463",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.020514Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.020137Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.079554Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.078260Z"
+    },
+    "id": "Ucz0oHDj0X36",
+    "papermill": {
+     "duration": 0.075973,
+     "end_time": "2023-02-07T07:16:34.082691",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.006718",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['Hepatitis C', 'Peptic ulcer diseae', 'GERD', 'Dengue', 'Dengue',\n",
+       "       'Migraine', 'Fungal infection',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Tuberculosis',\n",
+       "       'Migraine', 'Arthritis', 'Chicken pox', 'Fungal infection',\n",
+       "       'Hepatitis D', 'Urinary tract infection', 'Gastroenteritis',\n",
+       "       'Hypertension ', 'Hypoglycemia', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Arthritis', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Chicken pox', 'Osteoarthristis', 'Diabetes ',\n",
+       "       'Chronic cholestasis', 'GERD', 'Hypothyroidism', 'Osteoarthristis',\n",
+       "       'AIDS', 'Dimorphic hemmorhoids(piles)', 'hepatitis A',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Urinary tract infection', 'Paralysis (brain hemorrhage)',\n",
+       "       'Hypoglycemia', 'Jaundice', 'Cervical spondylosis',\n",
+       "       'Hypertension ', 'Jaundice', 'Jaundice', 'Tuberculosis',\n",
+       "       'Chicken pox', 'Drug Reaction', 'Alcoholic hepatitis', 'AIDS',\n",
+       "       'AIDS', 'Alcoholic hepatitis', 'Paralysis (brain hemorrhage)',\n",
+       "       'Common Cold', 'Osteoarthristis', 'Chicken pox',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'AIDS', 'Diabetes ', 'Psoriasis',\n",
+       "       'Alcoholic hepatitis', 'Hypoglycemia', 'Hepatitis E',\n",
+       "       'Hepatitis E', 'Arthritis', 'Hypoglycemia', 'Varicose veins',\n",
+       "       'Diabetes ', 'Peptic ulcer diseae', 'Urinary tract infection',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Hypothyroidism',\n",
+       "       'hepatitis A', 'GERD', 'Bronchial Asthma', 'Arthritis',\n",
+       "       'Hepatitis B', 'Diabetes ', 'Paralysis (brain hemorrhage)', 'Acne',\n",
+       "       'Typhoid', 'hepatitis A', 'Heart attack', 'Peptic ulcer diseae',\n",
+       "       'Diabetes ', 'Acne', 'Diabetes ', 'Fungal infection',\n",
+       "       'Hepatitis D', 'Varicose veins', 'Diabetes ', 'Pneumonia',\n",
+       "       'Hepatitis B', 'Hepatitis E', 'Tuberculosis', 'Fungal infection',\n",
+       "       'Hepatitis C', 'Diabetes ', 'Paralysis (brain hemorrhage)',\n",
+       "       'Allergy', 'Bronchial Asthma', 'Tuberculosis', 'Arthritis',\n",
+       "       'Urinary tract infection', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Hepatitis E', 'Alcoholic hepatitis', 'GERD', 'Arthritis',\n",
+       "       'Common Cold', 'Dengue', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Psoriasis', 'Drug Reaction', 'Osteoarthristis', 'Acne',\n",
+       "       'Tuberculosis', 'Heart attack', 'Typhoid', 'Chronic cholestasis',\n",
+       "       'Hyperthyroidism', 'Drug Reaction', 'Pneumonia', 'Common Cold',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Hepatitis C',\n",
+       "       'Chronic cholestasis', 'Impetigo', 'hepatitis A', 'Arthritis',\n",
+       "       'Arthritis', 'Dengue', 'Cervical spondylosis',\n",
+       "       'Urinary tract infection', 'Hepatitis B', 'Hepatitis E',\n",
+       "       'Peptic ulcer diseae', 'Malaria', 'Cervical spondylosis',\n",
+       "       'Hypothyroidism', 'Varicose veins', 'Hypertension ', 'Common Cold',\n",
+       "       'Hepatitis E', 'AIDS', 'Dengue', 'Jaundice', 'Chronic cholestasis',\n",
+       "       'Diabetes ', 'Cervical spondylosis', 'Chicken pox', 'Hepatitis B',\n",
+       "       'Paralysis (brain hemorrhage)', 'Chicken pox', 'Hepatitis D',\n",
+       "       'GERD', 'Hepatitis B', 'Gastroenteritis', 'Peptic ulcer diseae',\n",
+       "       'Bronchial Asthma', 'Dengue', 'Hepatitis B', 'Acne', 'Impetigo',\n",
+       "       'Chronic cholestasis', 'Arthritis', 'Hepatitis D', 'Tuberculosis',\n",
+       "       'Cervical spondylosis', 'Hypertension ', 'Migraine',\n",
+       "       'Urinary tract infection', 'Paralysis (brain hemorrhage)',\n",
+       "       'Allergy', 'Malaria', 'Hepatitis C', 'Hypothyroidism', 'Impetigo',\n",
+       "       'Hepatitis C', 'Pneumonia', 'GERD', 'Hepatitis B', 'Acne',\n",
+       "       'Hepatitis C', 'Hepatitis D',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Drug Reaction',\n",
+       "       'hepatitis A', 'Fungal infection', 'Allergy', 'Allergy',\n",
+       "       'Common Cold', 'Dengue', 'Osteoarthristis', 'Impetigo',\n",
+       "       'Hepatitis D', 'Tuberculosis', 'Hepatitis B', 'Hypertension ',\n",
+       "       'hepatitis A', 'Paralysis (brain hemorrhage)',\n",
+       "       'Cervical spondylosis', 'Jaundice', 'Heart attack', 'Jaundice',\n",
+       "       'Hypothyroidism', 'Peptic ulcer diseae', 'AIDS', 'GERD', 'Allergy',\n",
+       "       'hepatitis A', 'Heart attack', 'Osteoarthristis', 'Hepatitis E',\n",
+       "       'Gastroenteritis', 'Alcoholic hepatitis', 'Osteoarthristis',\n",
+       "       'Pneumonia', 'GERD', 'Hypertension ', 'Malaria',\n",
+       "       'Fungal infection', 'Osteoarthristis', 'Fungal infection',\n",
+       "       'Malaria', 'Chicken pox', 'Hepatitis C',\n",
+       "       'Paralysis (brain hemorrhage)', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Hepatitis B', 'Hepatitis B', 'Hepatitis D', 'Hypoglycemia',\n",
+       "       'Arthritis', 'Cervical spondylosis', 'Gastroenteritis',\n",
+       "       'Pneumonia', 'Hepatitis D', 'Tuberculosis', 'Hypothyroidism',\n",
+       "       'Psoriasis', 'Alcoholic hepatitis', 'Hypothyroidism',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'GERD',\n",
+       "       'Fungal infection', 'GERD', 'Jaundice', 'Arthritis',\n",
+       "       'Alcoholic hepatitis', 'Psoriasis', 'Osteoarthristis',\n",
+       "       'Osteoarthristis', 'Heart attack', 'Hypertension ', 'Hepatitis C',\n",
+       "       'Common Cold', 'Paralysis (brain hemorrhage)', 'Osteoarthristis',\n",
+       "       'Cervical spondylosis', 'Allergy', 'Chicken pox', 'Hepatitis E',\n",
+       "       'Chicken pox', 'Dengue', 'GERD', 'Hypoglycemia',\n",
+       "       'Paralysis (brain hemorrhage)', 'Impetigo', 'Hypothyroidism',\n",
+       "       'Peptic ulcer diseae', 'Varicose veins',\n",
+       "       'Paralysis (brain hemorrhage)', 'Chronic cholestasis',\n",
+       "       'Gastroenteritis', 'Chronic cholestasis', 'Peptic ulcer diseae',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Malaria', 'Acne', 'Typhoid',\n",
+       "       'Urinary tract infection', 'Varicose veins', 'Hypertension ',\n",
+       "       'Varicose veins', 'Drug Reaction', 'Fungal infection',\n",
+       "       'Hepatitis E', 'Allergy', 'Hepatitis E', 'Pneumonia',\n",
+       "       'Bronchial Asthma', 'Urinary tract infection', 'Bronchial Asthma',\n",
+       "       'Cervical spondylosis', 'Hypothyroidism', 'Common Cold',\n",
+       "       'Fungal infection', 'Typhoid', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Psoriasis', 'Hepatitis D', 'GERD', 'Diabetes ',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Bronchial Asthma',\n",
+       "       'Psoriasis', 'Hepatitis E', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Malaria', 'Hypothyroidism', 'Impetigo', 'Pneumonia',\n",
+       "       'Paralysis (brain hemorrhage)', 'Cervical spondylosis',\n",
+       "       'Fungal infection', 'Jaundice', 'Paralysis (brain hemorrhage)',\n",
+       "       'Allergy', 'Varicose veins', 'Hepatitis B', 'Migraine', 'AIDS',\n",
+       "       'Hepatitis D', 'Diabetes ', 'hepatitis A', 'Hypertension ',\n",
+       "       'Diabetes ', 'Hypertension ', 'Tuberculosis', 'Common Cold',\n",
+       "       'Bronchial Asthma', 'Bronchial Asthma', 'Heart attack',\n",
+       "       'Osteoarthristis', 'Impetigo', 'Acne', 'Hypothyroidism',\n",
+       "       'Chicken pox', 'AIDS', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Typhoid', 'Jaundice', 'Tuberculosis', 'Hyperthyroidism',\n",
+       "       'Osteoarthristis', 'Pneumonia', 'Hepatitis D', 'Hepatitis C',\n",
+       "       'Typhoid', 'GERD', 'Hepatitis C', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Impetigo', 'Alcoholic hepatitis', 'Peptic ulcer diseae',\n",
+       "       'Varicose veins', 'Peptic ulcer diseae', 'Chronic cholestasis',\n",
+       "       'Osteoarthristis', 'Paralysis (brain hemorrhage)', 'GERD',\n",
+       "       'Tuberculosis', 'Heart attack', 'Bronchial Asthma',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Chronic cholestasis', 'Diabetes ',\n",
+       "       'Heart attack', 'Hypothyroidism', 'Alcoholic hepatitis',\n",
+       "       'Chronic cholestasis', 'Hepatitis D',\n",
+       "       'Paralysis (brain hemorrhage)', 'Hypertension ',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Chronic cholestasis',\n",
+       "       'Arthritis', 'Diabetes ', 'hepatitis A', 'Fungal infection',\n",
+       "       'Pneumonia', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Hypertension ', 'hepatitis A', 'Hypoglycemia', 'GERD',\n",
+       "       'Diabetes ', 'AIDS', 'Malaria', 'Bronchial Asthma', 'Hepatitis E',\n",
+       "       'Chicken pox', 'Hepatitis B', 'Hepatitis B', 'Osteoarthristis',\n",
+       "       'Hepatitis C', 'Dengue', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Gastroenteritis', 'Hepatitis E', 'Hepatitis E', 'Hypoglycemia',\n",
+       "       'Malaria', 'Hepatitis E', 'Dengue', 'Hepatitis C', 'Hepatitis D',\n",
+       "       'Malaria', 'Hypoglycemia', 'Acne', 'Bronchial Asthma', 'Jaundice',\n",
+       "       'Drug Reaction', 'Dimorphic hemmorhoids(piles)', 'Tuberculosis',\n",
+       "       'Allergy', 'Hepatitis E', 'Bronchial Asthma', 'Hepatitis D',\n",
+       "       'Urinary tract infection', 'Paralysis (brain hemorrhage)',\n",
+       "       'Osteoarthristis', 'Gastroenteritis', 'Typhoid',\n",
+       "       'Cervical spondylosis', 'Hypothyroidism', 'Hepatitis C',\n",
+       "       'Tuberculosis', 'Acne', 'Hepatitis D', 'Acne', 'Hepatitis C',\n",
+       "       'Heart attack', 'Impetigo', 'Hepatitis E', 'Heart attack',\n",
+       "       'Hepatitis D', 'Dengue', 'Hyperthyroidism', 'Malaria', 'Psoriasis',\n",
+       "       'Drug Reaction', 'Jaundice',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Varicose veins',\n",
+       "       'Cervical spondylosis', 'Diabetes ', 'Varicose veins',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Alcoholic hepatitis',\n",
+       "       'Fungal infection', 'Bronchial Asthma', 'Osteoarthristis',\n",
+       "       'Bronchial Asthma', 'Hyperthyroidism', 'Hepatitis B', 'Allergy',\n",
+       "       'Hypertension ', 'Paralysis (brain hemorrhage)', 'Hypertension ',\n",
+       "       'Arthritis', 'Hypertension ', 'Dengue', 'Alcoholic hepatitis',\n",
+       "       'Arthritis', 'Typhoid', 'Hyperthyroidism', 'Hyperthyroidism',\n",
+       "       'Hepatitis C', 'Heart attack', 'Bronchial Asthma', 'Jaundice',\n",
+       "       'hepatitis A', 'Chicken pox', 'Hepatitis D', 'AIDS',\n",
+       "       'Drug Reaction', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Hypertension ', 'Psoriasis', 'Drug Reaction', 'Hepatitis B',\n",
+       "       'Allergy', 'Migraine', 'Allergy', 'Chicken pox', 'Acne',\n",
+       "       'Jaundice', 'Peptic ulcer diseae', 'Hypothyroidism',\n",
+       "       'Hypoglycemia', 'AIDS', 'Peptic ulcer diseae', 'Malaria',\n",
+       "       'Hepatitis C', 'Fungal infection', 'Drug Reaction',\n",
+       "       'Urinary tract infection', 'Hyperthyroidism',\n",
+       "       'Peptic ulcer diseae', 'Alcoholic hepatitis', 'Varicose veins',\n",
+       "       'Heart attack', 'Osteoarthristis', 'Common Cold', 'AIDS',\n",
+       "       'Chronic cholestasis', 'Heart attack', 'Migraine',\n",
+       "       'Hypothyroidism', 'Hepatitis E', 'Bronchial Asthma', 'Pneumonia',\n",
+       "       'Fungal infection', 'Osteoarthristis', 'hepatitis A',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Urinary tract infection', 'Pneumonia', 'Peptic ulcer diseae',\n",
+       "       'Diabetes ', 'AIDS', 'Alcoholic hepatitis', 'Chicken pox', 'Acne',\n",
+       "       'hepatitis A', 'Hepatitis C', 'Osteoarthristis', 'Osteoarthristis',\n",
+       "       'Osteoarthristis', 'Osteoarthristis', 'Cervical spondylosis',\n",
+       "       'Peptic ulcer diseae', 'Hyperthyroidism', 'Tuberculosis',\n",
+       "       'Hyperthyroidism', 'Drug Reaction', 'Hepatitis C',\n",
+       "       'Chronic cholestasis', 'AIDS', 'Hepatitis B', 'Hypertension ',\n",
+       "       'Heart attack', 'Cervical spondylosis',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Fungal infection',\n",
+       "       'Gastroenteritis', 'Malaria', 'Cervical spondylosis',\n",
+       "       'Hepatitis B', 'Urinary tract infection', 'Alcoholic hepatitis',\n",
+       "       'Urinary tract infection', 'Hypoglycemia', 'Impetigo',\n",
+       "       'Bronchial Asthma', 'Hepatitis B', 'Psoriasis', 'GERD', 'Typhoid',\n",
+       "       'Acne', 'AIDS', 'Hepatitis C', 'Dengue', 'Peptic ulcer diseae',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Drug Reaction',\n",
+       "       'Arthritis', 'Chronic cholestasis', 'Impetigo', 'Allergy',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Typhoid', 'Heart attack',\n",
+       "       'Alcoholic hepatitis', 'Varicose veins', 'Hypothyroidism',\n",
+       "       'Hypoglycemia', 'Paralysis (brain hemorrhage)', 'Impetigo',\n",
+       "       'Tuberculosis', 'Dengue', 'Hepatitis D', 'Chronic cholestasis',\n",
+       "       'Cervical spondylosis', 'Impetigo', 'Typhoid', 'Hepatitis C',\n",
+       "       'Diabetes ', 'Hypoglycemia', 'Paralysis (brain hemorrhage)',\n",
+       "       'Bronchial Asthma', 'Psoriasis', 'Fungal infection',\n",
+       "       'Urinary tract infection', 'Varicose veins', 'Heart attack',\n",
+       "       'Hypoglycemia', 'Hepatitis D', 'Typhoid', 'Alcoholic hepatitis',\n",
+       "       'Drug Reaction', 'Diabetes ', 'Acne',\n",
+       "       'Paralysis (brain hemorrhage)', 'Pneumonia', 'Hepatitis B',\n",
+       "       'Varicose veins', 'Typhoid',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Allergy', 'Migraine',\n",
+       "       'Cervical spondylosis', 'Dengue', 'Paralysis (brain hemorrhage)',\n",
+       "       'Dengue', 'Hepatitis E', 'Migraine', 'Tuberculosis',\n",
+       "       'Fungal infection', 'Dengue', 'Cervical spondylosis',\n",
+       "       'Varicose veins', 'Acne', 'Fungal infection', 'Diabetes ',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Arthritis', 'Hepatitis E',\n",
+       "       'Typhoid', 'Osteoarthristis', 'Osteoarthristis', 'Chicken pox',\n",
+       "       'Diabetes ', 'Arthritis', 'Hepatitis E', 'Drug Reaction',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Allergy', 'Allergy', 'Impetigo',\n",
+       "       'Bronchial Asthma', 'Pneumonia', 'Urinary tract infection',\n",
+       "       'Hepatitis C', 'Malaria', 'Paralysis (brain hemorrhage)',\n",
+       "       'Psoriasis', 'Migraine', 'Osteoarthristis',\n",
+       "       'Urinary tract infection', 'Alcoholic hepatitis',\n",
+       "       'Urinary tract infection', 'Hypoglycemia', 'Dengue', 'Typhoid',\n",
+       "       'AIDS', 'Gastroenteritis', 'Malaria', 'Hypertension ',\n",
+       "       'Alcoholic hepatitis', 'Drug Reaction', 'Tuberculosis',\n",
+       "       'Fungal infection', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       'Pneumonia', '(vertigo) Paroymsal  Positional Vertigo', 'Migraine',\n",
+       "       'Hyperthyroidism', 'Impetigo', 'Impetigo', 'Acne', 'Psoriasis',\n",
+       "       'GERD', 'Psoriasis', 'Urinary tract infection', 'Bronchial Asthma',\n",
+       "       'GERD', 'Hypoglycemia', 'Allergy', 'Urinary tract infection',\n",
+       "       'Hepatitis D', 'Gastroenteritis', 'Varicose veins', 'Pneumonia',\n",
+       "       'Bronchial Asthma', 'Arthritis', 'Hypothyroidism', 'Psoriasis',\n",
+       "       'Gastroenteritis', 'Impetigo', 'Hypoglycemia', 'Pneumonia',\n",
+       "       'Hypoglycemia', 'Hypoglycemia', 'Peptic ulcer diseae', 'Migraine',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Hypothyroidism',\n",
+       "       'Hepatitis D', 'Pneumonia', 'Impetigo', 'Alcoholic hepatitis',\n",
+       "       'Hyperthyroidism', 'Migraine', 'Hepatitis D', 'Hyperthyroidism',\n",
+       "       'Cervical spondylosis', 'Dimorphic hemmorhoids(piles)',\n",
+       "       'Arthritis', 'Hypothyroidism', 'Hepatitis E', 'Fungal infection',\n",
+       "       'Psoriasis', 'Tuberculosis', 'Pneumonia', 'Hyperthyroidism',\n",
+       "       'Hepatitis E', 'Impetigo', 'Varicose veins', 'Drug Reaction',\n",
+       "       'Hepatitis B', 'Peptic ulcer diseae', 'Urinary tract infection',\n",
+       "       'Bronchial Asthma', 'Chicken pox', 'Hypothyroidism', 'Diabetes ',\n",
+       "       'Malaria', 'Alcoholic hepatitis', 'Hypothyroidism',\n",
+       "       'Cervical spondylosis', '(vertigo) Paroymsal  Positional Vertigo',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Jaundice', 'Arthritis',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Alcoholic hepatitis', 'Impetigo',\n",
+       "       'Gastroenteritis', 'Hypertension ', 'Varicose veins',\n",
+       "       'Tuberculosis', 'Gastroenteritis', 'Malaria', 'Pneumonia',\n",
+       "       'Hepatitis E', 'Tuberculosis', 'GERD', 'hepatitis A',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'AIDS', 'Tuberculosis',\n",
+       "       'Hepatitis D', 'Hypertension ', 'Allergy', 'Arthritis',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Dengue', 'Alcoholic hepatitis',\n",
+       "       'Chronic cholestasis', 'Gastroenteritis', 'AIDS', 'Impetigo',\n",
+       "       'Migraine', 'Fungal infection', 'GERD', 'Pneumonia', 'Common Cold',\n",
+       "       'Diabetes ', 'Heart attack', 'Hypothyroidism', 'Migraine',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Hypoglycemia', 'Hypertension ',\n",
+       "       'Cervical spondylosis', 'Hepatitis B', 'Bronchial Asthma',\n",
+       "       'Migraine', 'hepatitis A', 'Cervical spondylosis', 'Allergy',\n",
+       "       'Chronic cholestasis', 'Alcoholic hepatitis', 'Malaria',\n",
+       "       'Osteoarthristis', 'Allergy', 'Allergy', 'Malaria', 'Migraine',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Fungal infection',\n",
+       "       'Varicose veins', 'Cervical spondylosis', 'Dengue', 'Psoriasis',\n",
+       "       'Chronic cholestasis', 'Diabetes ', 'Common Cold',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Dengue',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Pneumonia',\n",
+       "       'hepatitis A', 'Osteoarthristis', 'Common Cold',\n",
+       "       'Alcoholic hepatitis', 'GERD', 'Fungal infection', 'Arthritis',\n",
+       "       'Osteoarthristis', 'Hypothyroidism', 'Arthritis', 'Typhoid',\n",
+       "       'Acne', 'Alcoholic hepatitis', 'Heart attack', 'Malaria', 'Acne',\n",
+       "       'Arthritis', 'Hepatitis C', 'GERD', 'Tuberculosis', 'Hypoglycemia',\n",
+       "       'Hyperthyroidism', 'Diabetes ', 'Paralysis (brain hemorrhage)',\n",
+       "       'Hyperthyroidism', 'Migraine', 'Urinary tract infection', 'AIDS',\n",
+       "       'Chicken pox', 'Hyperthyroidism', 'Varicose veins',\n",
+       "       'Hypothyroidism', 'Paralysis (brain hemorrhage)', 'Hepatitis C',\n",
+       "       'Acne', 'Hypoglycemia', 'Allergy', 'Pneumonia',\n",
+       "       'Paralysis (brain hemorrhage)', 'Gastroenteritis', 'Hepatitis C',\n",
+       "       'Bronchial Asthma', 'Cervical spondylosis',\n",
+       "       'Urinary tract infection', 'Common Cold', 'Allergy', 'Common Cold',\n",
+       "       'Heart attack', 'Heart attack', 'Arthritis',\n",
+       "       'Cervical spondylosis', 'Common Cold', 'Migraine',\n",
+       "       'Cervical spondylosis', 'Hepatitis E', 'Cervical spondylosis',\n",
+       "       'Varicose veins', 'Chicken pox', 'Fungal infection',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Gastroenteritis',\n",
+       "       'Allergy', 'Common Cold', 'Urinary tract infection', 'Hepatitis C',\n",
+       "       'hepatitis A', 'Heart attack', 'Diabetes ', 'Hepatitis E', 'Acne',\n",
+       "       'Hepatitis C', 'Arthritis', 'Fungal infection', 'Hepatitis C',\n",
+       "       'Allergy', 'Hyperthyroidism', 'Chicken pox', 'Jaundice',\n",
+       "       'Drug Reaction', 'Diabetes ', 'Alcoholic hepatitis',\n",
+       "       'Hypothyroidism', 'AIDS', 'Osteoarthristis', 'Gastroenteritis',\n",
+       "       'Migraine', 'Hepatitis E', 'Alcoholic hepatitis', 'Typhoid',\n",
+       "       'Typhoid', 'Hypothyroidism', 'GERD', 'Hypoglycemia', 'Chicken pox',\n",
+       "       'Hepatitis E', 'Arthritis', 'Varicose veins', 'Psoriasis', 'Acne',\n",
+       "       'Varicose veins', 'Fungal infection', 'Fungal infection',\n",
+       "       'Alcoholic hepatitis', 'Hypertension ', 'Dengue', 'Hypothyroidism',\n",
+       "       'Heart attack', 'Hepatitis D', 'Urinary tract infection',\n",
+       "       'Peptic ulcer diseae', 'Common Cold', 'Chicken pox', 'Chicken pox',\n",
+       "       'AIDS', 'Dengue', 'hepatitis A', 'Hepatitis C', 'Varicose veins',\n",
+       "       'Pneumonia', 'Urinary tract infection', 'Malaria', 'Psoriasis',\n",
+       "       'Common Cold', 'Hepatitis E', 'Hypoglycemia', 'Hypoglycemia',\n",
+       "       'Hypothyroidism', 'Diabetes ', 'Tuberculosis', 'Hepatitis C',\n",
+       "       'Heart attack', 'Gastroenteritis', 'Allergy',\n",
+       "       'Cervical spondylosis', 'Chronic cholestasis', 'Hypothyroidism',\n",
+       "       'Acne', 'Dimorphic hemmorhoids(piles)', 'Migraine', 'hepatitis A',\n",
+       "       'Hypoglycemia', 'Paralysis (brain hemorrhage)',\n",
+       "       'Dimorphic hemmorhoids(piles)', 'Malaria', 'Drug Reaction',\n",
+       "       'Impetigo', 'Chicken pox', 'GERD', 'Drug Reaction',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Diabetes ',\n",
+       "       'Urinary tract infection', 'Dengue', 'Hepatitis C', 'Common Cold',\n",
+       "       'Common Cold', 'Peptic ulcer diseae', 'Malaria',\n",
+       "       'Paralysis (brain hemorrhage)', 'Typhoid', 'Hypertension ',\n",
+       "       'Hyperthyroidism', 'Tuberculosis', 'Gastroenteritis',\n",
+       "       'Tuberculosis', 'Tuberculosis', 'Hepatitis E',\n",
+       "       '(vertigo) Paroymsal  Positional Vertigo', 'Psoriasis', 'Migraine',\n",
+       "       'Hepatitis C', 'Peptic ulcer diseae', 'Arthritis',\n",
+       "       'Bronchial Asthma', 'Acne', 'Typhoid', 'Osteoarthristis',\n",
+       "       'Urinary tract infection', 'Bronchial Asthma', 'Hepatitis B',\n",
+       "       'Cervical spondylosis', 'Alcoholic hepatitis', 'Osteoarthristis'],\n",
+       "      dtype=object)"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# predict with model\n",
+    "y_pred = model.predict(X_test)\n",
+    "y_pred"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "d7e65ef2",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.110204Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.109821Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.118559Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.117373Z"
+    },
+    "executionInfo": {
+     "elapsed": 12,
+     "status": "ok",
+     "timestamp": 1661324816875,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "JJV2eHf50o4W",
+    "outputId": "8a3cb83f-683a-4be5-ca27-ae3467cc7057",
+    "papermill": {
+     "duration": 0.025683,
+     "end_time": "2023-02-07T07:16:34.121044",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.095361",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1.0"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# model accuracy\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "accuracy_score(y_test, y_pred)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "4877d527",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.149427Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.149024Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.163807Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.163041Z"
+    },
+    "executionInfo": {
+     "elapsed": 3,
+     "status": "ok",
+     "timestamp": 1661324818614,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "h100Msuz00TT",
+    "outputId": "26ab22d9-efef-4161-97ae-8fa447b2648d",
+    "papermill": {
+     "duration": 0.032563,
+     "end_time": "2023-02-07T07:16:34.166378",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.133815",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[28,  0,  0, ...,  0,  0,  0],\n",
+       "       [ 0, 21,  0, ...,  0,  0,  0],\n",
+       "       [ 0,  0, 23, ...,  0,  0,  0],\n",
+       "       ...,\n",
+       "       [ 0,  0,  0, ..., 27,  0,  0],\n",
+       "       [ 0,  0,  0, ...,  0, 24,  0],\n",
+       "       [ 0,  0,  0, ...,  0,  0, 19]])"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# model confusion matrix\n",
+    "from sklearn.metrics import confusion_matrix \n",
+    "confusion_matrix(y_test, y_pred)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "4ccdd460",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.192169Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.191779Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.228888Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.227382Z"
+    },
+    "executionInfo": {
+     "elapsed": 638,
+     "status": "ok",
+     "timestamp": 1661324820827,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "BINeM-mo1Arv",
+    "outputId": "425f2f93-dd16-4fb4-c68c-e4372b6b2d64",
+    "papermill": {
+     "duration": 0.053769,
+     "end_time": "2023-02-07T07:16:34.232200",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.178431",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                                         precision    recall  f1-score   support\n",
+      "\n",
+      "(vertigo) Paroymsal  Positional Vertigo       1.00      1.00      1.00        28\n",
+      "                                   AIDS       1.00      1.00      1.00        21\n",
+      "                                   Acne       1.00      1.00      1.00        23\n",
+      "                    Alcoholic hepatitis       1.00      1.00      1.00        29\n",
+      "                                Allergy       1.00      1.00      1.00        26\n",
+      "                              Arthritis       1.00      1.00      1.00        28\n",
+      "                       Bronchial Asthma       1.00      1.00      1.00        26\n",
+      "                   Cervical spondylosis       1.00      1.00      1.00        29\n",
+      "                            Chicken pox       1.00      1.00      1.00        23\n",
+      "                    Chronic cholestasis       1.00      1.00      1.00        19\n",
+      "                            Common Cold       1.00      1.00      1.00        20\n",
+      "                                 Dengue       1.00      1.00      1.00        24\n",
+      "                              Diabetes        1.00      1.00      1.00        29\n",
+      "           Dimorphic hemmorhoids(piles)       1.00      1.00      1.00        25\n",
+      "                          Drug Reaction       1.00      1.00      1.00        19\n",
+      "                       Fungal infection       1.00      1.00      1.00        28\n",
+      "                                   GERD       1.00      1.00      1.00        24\n",
+      "                        Gastroenteritis       1.00      1.00      1.00        19\n",
+      "                           Heart attack       1.00      1.00      1.00        23\n",
+      "                            Hepatitis B       1.00      1.00      1.00        22\n",
+      "                            Hepatitis C       1.00      1.00      1.00        31\n",
+      "                            Hepatitis D       1.00      1.00      1.00        24\n",
+      "                            Hepatitis E       1.00      1.00      1.00        30\n",
+      "                          Hypertension        1.00      1.00      1.00        23\n",
+      "                        Hyperthyroidism       1.00      1.00      1.00        18\n",
+      "                           Hypoglycemia       1.00      1.00      1.00        26\n",
+      "                         Hypothyroidism       1.00      1.00      1.00        29\n",
+      "                               Impetigo       1.00      1.00      1.00        22\n",
+      "                               Jaundice       1.00      1.00      1.00        15\n",
+      "                                Malaria       1.00      1.00      1.00        22\n",
+      "                               Migraine       1.00      1.00      1.00        21\n",
+      "                        Osteoarthristis       1.00      1.00      1.00        32\n",
+      "           Paralysis (brain hemorrhage)       1.00      1.00      1.00        27\n",
+      "                    Peptic ulcer diseae       1.00      1.00      1.00        21\n",
+      "                              Pneumonia       1.00      1.00      1.00        23\n",
+      "                              Psoriasis       1.00      1.00      1.00        19\n",
+      "                           Tuberculosis       1.00      1.00      1.00        26\n",
+      "                                Typhoid       1.00      1.00      1.00        20\n",
+      "                Urinary tract infection       1.00      1.00      1.00        27\n",
+      "                         Varicose veins       1.00      1.00      1.00        24\n",
+      "                            hepatitis A       1.00      1.00      1.00        19\n",
+      "\n",
+      "                               accuracy                           1.00       984\n",
+      "                              macro avg       1.00      1.00      1.00       984\n",
+      "                           weighted avg       1.00      1.00      1.00       984\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# model classification report\n",
+    "from sklearn.metrics import classification_report  \n",
+    "print(classification_report(y_test, y_pred))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "0b1937c7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.258794Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.257847Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.289837Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.288271Z"
+    },
+    "executionInfo": {
+     "elapsed": 531,
+     "status": "ok",
+     "timestamp": 1661324829056,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "_kC5WrRO1Gfj",
+    "outputId": "62811be1-ba34-4534-c160-76bafea172a4",
+    "papermill": {
+     "duration": 0.04815,
+     "end_time": "2023-02-07T07:16:34.292599",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.244449",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/opt/conda/lib/python3.7/site-packages/sklearn/base.py:451: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names\n",
+      "  \"X does not have valid feature names, but\"\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "array(['Chicken pox'], dtype=object)"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# future prediction\n",
+    "model.predict([[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0]])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "e5c5e851",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.319332Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.318849Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.328757Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.327466Z"
+    },
+    "executionInfo": {
+     "elapsed": 9,
+     "status": "ok",
+     "timestamp": 1661324830631,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "CxLn9E-n1Zht",
+    "outputId": "2395459a-2059-4fcc-f135-cd3b5e78604a",
+    "papermill": {
+     "duration": 0.025681,
+     "end_time": "2023-02-07T07:16:34.330891",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.305210",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# define X_new\n",
+    "X_new = [[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0]]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "92294124",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2023-02-07T07:16:34.357475Z",
+     "iopub.status.busy": "2023-02-07T07:16:34.357014Z",
+     "iopub.status.idle": "2023-02-07T07:16:34.385293Z",
+     "shell.execute_reply": "2023-02-07T07:16:34.382884Z"
+    },
+    "executionInfo": {
+     "elapsed": 3,
+     "status": "ok",
+     "timestamp": 1661324832470,
+     "user": {
+      "displayName": "YBI Foundation",
+      "userId": "14999490793651581791"
+     },
+     "user_tz": -330
+    },
+    "id": "ph3XVzdw2MS2",
+    "outputId": "51c39737-2955-40f7-cafe-8c02847ae03e",
+    "papermill": {
+     "duration": 0.044683,
+     "end_time": "2023-02-07T07:16:34.388013",
+     "exception": false,
+     "start_time": "2023-02-07T07:16:34.343330",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/opt/conda/lib/python3.7/site-packages/sklearn/base.py:451: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names\n",
+      "  \"X does not have valid feature names, but\"\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "array(['Chicken pox'], dtype=object)"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# predict for X_new\n",
+    "model.predict([[1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,\n",
+    "              0, 0, 0, 0, 0]])"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 17.886629,
+   "end_time": "2023-02-07T07:16:35.223061",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2023-02-07T07:16:17.336432",
+   "version": "2.3.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
